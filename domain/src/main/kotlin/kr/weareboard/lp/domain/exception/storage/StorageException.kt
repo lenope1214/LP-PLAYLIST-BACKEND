@@ -1,4 +1,4 @@
-package kr.co.jsol.domain.exception.storage
+package kr.weareboard.lp.domain.exception.storage
 
 open class StorageException : RuntimeException {
     constructor(message: String?) : super(message) {}

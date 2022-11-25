@@ -1,4 +1,4 @@
-package kr.co.jsol.domain.jwt
+package kr.weareboard.lp.domain.jwt
 
 import org.springframework.security.core.AuthenticationException
 import org.springframework.security.web.AuthenticationEntryPoint

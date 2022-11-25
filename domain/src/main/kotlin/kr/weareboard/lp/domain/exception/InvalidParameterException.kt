@@ -1,4 +1,4 @@
-package kr.co.jsol.domain.exception
+package kr.weareboard.lp.domain.exception
 
 import org.springframework.validation.Errors
 

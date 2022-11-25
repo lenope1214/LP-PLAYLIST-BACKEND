@@ -1,6 +1,6 @@
-package kr.co.jsol.domain.exception
+package kr.weareboard.lp.domain.exception
 
-import kr.co.jsol.domain.exception.storage.StorageException
+import kr.weareboard.lp.domain.exception.storage.StorageException
 import org.slf4j.LoggerFactory
 import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.http.HttpStatus

@@ -1,4 +1,4 @@
-package kr.co.jsol.domain.jwt
+package kr.weareboard.lp.domain.jwt
 
 data class JsonWebTokenDto(
     val grantType: String? = null,

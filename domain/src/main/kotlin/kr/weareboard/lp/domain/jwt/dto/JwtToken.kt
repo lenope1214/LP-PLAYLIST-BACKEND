@@ -1,4 +1,4 @@
-package kr.co.jsol.domain.jwt.dto
+package kr.weareboard.lp.domain.jwt.dto
 
 open class JwtToken(
     open val refreshToken: String,

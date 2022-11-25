@@ -47,7 +47,12 @@ subprojects {
 		implementation("org.springframework.boot:spring-boot-starter-jdbc")
 		implementation("org.springframework.boot:spring-boot-starter-validation") // 파라미터 값 확인(인증, Bean Validation)을 위해
 		implementation("org.springframework.boot:spring-boot-starter-security")
-		implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
+		implementation("org.springframework.boot:spring-boot-starter-oauth2-client") // kakao
+
+		// websocket에
+		// com.fasterxml.jackson.databind
+		//javax.servlet 과 같은 의존성이 있어서 덤으로 추가했다. websocket을 빼고 따로 추가해도 된다
+		implementation("org.springframework.boot:spring-boot-starter-websocket")
 
 		implementation("org.jetbrains.kotlin:kotlin-reflect")
 		implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")

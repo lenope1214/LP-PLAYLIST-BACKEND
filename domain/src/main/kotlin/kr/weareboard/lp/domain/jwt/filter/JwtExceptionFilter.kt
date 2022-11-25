@@ -1,7 +1,7 @@
-package kr.co.jsol.domain.jwt.filter
+package kr.weareboard.lp.domain.jwt.filter
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import kr.co.jsol.domain.exception.UnauthorizedException
+import kr.weareboard.lp.domain.exception.UnauthorizedException
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Component

@@ -1,4 +1,4 @@
-package kr.co.jsol.api.config
+package kr.weareboard.lp.api.config
 
 import com.querydsl.jpa.impl.JPAQueryFactory
 import org.springframework.context.annotation.Bean

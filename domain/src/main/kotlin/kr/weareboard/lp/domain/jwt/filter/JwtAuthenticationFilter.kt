@@ -1,11 +1,11 @@
-package kr.co.jsol.domain.jwt.filter
+package kr.weareboard.lp.domain.jwt.filter
 
 import io.jsonwebtoken.ExpiredJwtException
 import io.jsonwebtoken.MalformedJwtException
 import io.jsonwebtoken.UnsupportedJwtException
 import io.jsonwebtoken.io.IOException
 import io.jsonwebtoken.security.SecurityException
-import kr.co.jsol.domain.jwt.JwtTokenProvider
+import kr.weareboard.lp.domain.jwt.JwtTokenProvider
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value

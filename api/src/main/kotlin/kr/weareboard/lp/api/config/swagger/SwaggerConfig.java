@@ -57,7 +57,7 @@ public class SwaggerConfig {
                 .securitySchemes(Arrays.asList(apiKey()))
                 .useDefaultResponseMessages(false)
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("kr.co.jsol.api.controller")) // controller가 있는 패키지 지정 basePackage
+                .apis(RequestHandlerSelectors.basePackage("kr.weareboard.lp.api.controller")) // controller가 있는 패키지 지정 basePackage
                 .paths(PathSelectors.any())
                 .build()
                 .apiInfo(apiInfo());

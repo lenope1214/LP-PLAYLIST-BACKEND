@@ -1,4 +1,4 @@
-package kr.co.jsol.domain.exception.storage
+package kr.weareboard.lp.domain.exception.storage
 
 class StorageFileNotFoundException : StorageException {
     constructor(message: String?) : super(message) {}

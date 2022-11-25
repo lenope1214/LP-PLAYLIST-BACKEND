@@ -1,4 +1,4 @@
-package kr.co.jsol.api.config
+package kr.weareboard.lp.api.config
 
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpMethod

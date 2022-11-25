@@ -1,4 +1,4 @@
-package kr.co.jsol.domain.exception
+package kr.weareboard.lp.domain.exception
 
 open class UnauthorizedException : BasicException {
     constructor() : super(401, "계정 정보 인증에 실패했습니다.") {}

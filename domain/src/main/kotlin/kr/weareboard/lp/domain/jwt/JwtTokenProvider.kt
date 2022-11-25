@@ -1,10 +1,10 @@
-package kr.co.jsol.domain.jwt
+package kr.weareboard.lp.domain.jwt
 
 import io.jsonwebtoken.*
 import io.jsonwebtoken.security.Keys
 import io.jsonwebtoken.security.SecurityException
-import kr.co.jsol.domain.entity.user.UserDetailServiceImpl
-import kr.co.jsol.domain.exception.UnauthorizedException
+import kr.weareboard.lp.domain.entity.user.UserDetailServiceImpl
+import kr.weareboard.lp.domain.exception.UnauthorizedException
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken

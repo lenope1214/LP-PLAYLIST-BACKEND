@@ -1,4 +1,4 @@
-package kr.co.jsol.domain.exception
+package kr.weareboard.lp.domain.exception
 
 class BadRequestException : BasicException {
     constructor() : super(400, "잘못된 요청입니다. 데이터를 확인해주세요.") {}
