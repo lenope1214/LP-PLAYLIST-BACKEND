@@ -22,9 +22,6 @@ class JwtAuthenticationFilter(private val jwtTokenProvider: JwtTokenProvider) : 
 
     val log: Logger = LoggerFactory.getLogger(this.javaClass)
 
-    @Value("\${jwt.paths}")
-    val validPaths: List<String> = listOf()
-
     @Throws(
         IOException::class,
         ServletException::class,

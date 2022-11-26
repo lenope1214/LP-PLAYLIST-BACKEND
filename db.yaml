@@ -7,9 +7,9 @@ services:
     image: mariadb
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: 1234
+      MYSQL_ROOT_PASSWORD: leehj12!$
     ports:
-      - '3306:3306'
+      - '58306:3306'
     volumes:
       - mariadb:/var/lib/mysql
   mysql:
@@ -17,7 +17,7 @@ services:
     image: mysql:8
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: 1234
+      MYSQL_ROOT_PASSWORD: leehj12!$
     command: --default-authentication-plugin=mysql_native_password
     ports:
       - '13306:3306'
@@ -29,7 +29,7 @@ services:
     restart: always
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: 1234
+      POSTGRES_PASSWORD: leehj12!$
     ports:
       - '5432:5432'
     volumes:
@@ -40,7 +40,7 @@ services:
     image: redis
     restart: always
     command:
-      - --requirepass "1234"
+      - --requirepass "leehj12!$"
     ports:
       - '6370:6370'
     volumes:

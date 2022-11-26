@@ -97,4 +97,19 @@ class JwtTokenProvider(private val userDetailsService: UserDetailServiceImpl) {
             throw UnauthorizedException("JWT claims string is empty, please update token")
         }
     }
+
+    fun generateTokenForOAuth(type: String, email: String, nickname: String): String {
+        val claims: Claims = Jwts.claims().setSubject(email)
+        claims["type"] = type
+        claims["email"] = email
+        claims["nickname"] = nickname
+        val now = Date()
+        val expiredTime = now.time + accessTokenValidTime
+        return Jwts.builder()
+            .setClaims(claims)
+            .setIssuedAt(now)
+            .setExpiration(Date(expiredTime))
+            .signWith(secretKey, SignatureAlgorithm.HS256)
+            .compact()
+    }
 }

@@ -1,5 +1,7 @@
 package kr.weareboard.lp.api.config
 
+import kr.weareboard.lp.api.config.oauth2.OAuth2AuthenticationSuccessHandler
+import kr.weareboard.lp.domain.entity.user.UserOAuth2Service
 import kr.weareboard.lp.domain.jwt.JwtTokenProvider
 import kr.weareboard.lp.domain.jwt.filter.JwtAuthenticationFilter
 import kr.weareboard.lp.domain.jwt.filter.JwtExceptionFilter
@@ -27,16 +29,13 @@ import org.springframework.security.web.firewall.HttpFirewall
 class SecurityConfig(
     private val jwtTokenProvider: JwtTokenProvider,
     private val jwtExceptionFilter: JwtExceptionFilter,
+    private val oAuth2AuthenticationSuccessHandler: OAuth2AuthenticationSuccessHandler,
+    private val userOAuth2Service: UserOAuth2Service,
 ) : WebSecurityConfigurerAdapter() {
 
     @Bean // 더블 슬래쉬 허용
     fun defaultHttpFirewall(): HttpFirewall {
         return DefaultHttpFirewall()
-    }
-
-    @Bean
-    fun passwordEncoder(): PasswordEncoder {
-        return BCryptPasswordEncoder()
     }
 
     @Bean
@@ -59,18 +58,27 @@ class SecurityConfig(
 
             // api/v1 으로 시작하는 요청
             .antMatchers("/api/v1").authenticated()
-            // api로 시작하는 요청은 권한 필요 없음
-            .antMatchers("/api/**").permitAll()
+
+            // api, oauth2 로 시작하는 요청은 권한 필요 없음
+            .antMatchers("/api/**", "/oauth2/**").permitAll()
 
             // 그 외 모든 요청은 권한확인
             .anyRequest().authenticated()
-
+        
+            .and()
+                // oauth2 로그인 설정 추가
+            .oauth2Login()
+                // 로그인 성공 시 설정 추가
+                .defaultSuccessUrl("/login-success")
+                .successHandler(oAuth2AuthenticationSuccessHandler)
+                .userInfoEndpoint()
+                .userService(userOAuth2Service);
         http
             .addFilterBefore(
                 JwtAuthenticationFilter(jwtTokenProvider),
                 UsernamePasswordAuthenticationFilter::class.java
             )
-            .addFilterBefore(jwtExceptionFilter, JwtAuthenticationFilter::class.java)
+//            .addFilterBefore(jwtExceptionFilter, JwtAuthenticationFilter::class.java)
     }
 
     //    override fun configure(http: HttpSecurity) {
