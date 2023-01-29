@@ -21,7 +21,7 @@ noArg {
 }
 
 dependencies {
-//    api(project(":core"))
+    api(project(":core"))
 
     val kapt by configurations
     api("org.springframework.boot:spring-boot-starter-data-jpa")

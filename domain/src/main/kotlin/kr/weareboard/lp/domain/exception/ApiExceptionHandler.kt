@@ -1,7 +1,8 @@
 package kr.weareboard.lp.domain.exception
 
-import kr.weareboard.lp.domain.exception.storage.StorageException
+import kr.weareboard.lp.core.storage.exception.StorageException
 import org.slf4j.LoggerFactory
+import org.springframework.beans.BeanInstantiationException
 import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -102,6 +103,22 @@ class ApiExceptionHandler {
         )
     }
 
+    @ExceptionHandler(BeanInstantiationException::class)
+    fun beanInstantiationExceptionHandler(ex: BeanInstantiationException): ResponseEntity<BadRequestException> {
+        logger.error("beanInstantiationExceptionHandler - message : ${ex.message}")
+        val message: String = ex.message ?: "Bad request"
+        var parsedMessage: String = message
+        if(parsedMessage.contains(":")){
+            val split = parsedMessage.split(":")
+            parsedMessage = split[split.size - 1].trim()
+        }
+
+        ex.printStackTrace()
+        return ResponseEntity<BadRequestException>(
+            BadRequestException(parsedMessage),
+            HttpStatus.INTERNAL_SERVER_ERROR
+        )
+    }
 
     @ExceptionHandler(ResponseStatusException::class)
     fun handleResponseStatusException(ex: ResponseStatusException): ResponseEntity<String> {

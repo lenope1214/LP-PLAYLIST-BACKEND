@@ -14,8 +14,6 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
 import org.springframework.security.config.http.SessionCreationPolicy
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
-import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 import org.springframework.security.web.firewall.DefaultHttpFirewall
 import org.springframework.security.web.firewall.HttpFirewall
@@ -51,34 +49,45 @@ class SecurityConfig(
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 
         http.authorizeRequests()
+            // 모든 요청 처리 허용
+            .anyRequest().permitAll()
+
 //            .antMatchers("/api/auth/*").permitAll()
 //            .antMatchers("/api/auth/login").permitAll()
 //            .antMatchers("/api/v1/user").permitAll()
 //            .antMatchers("/api/**").authenticated()
 
             // api/v1 으로 시작하는 요청
-            .antMatchers("/api/v1").authenticated()
-
-            // api, oauth2 로 시작하는 요청은 권한 필요 없음
-            .antMatchers("/api/**", "/oauth2/**").permitAll()
+//            .antMatchers("/api/v1").authenticated()
+//
+//            // api, oauth2 로 시작하는 요청은 권한 필요 없음
+//            .antMatchers("/api/**", "/oauth2/**").permitAll()
 
             // 그 외 모든 요청은 권한확인
-            .anyRequest().authenticated()
-        
+//            .anyRequest().authenticated()
+
             .and()
-                // oauth2 로그인 설정 추가
+            .formLogin()
+            .disable()
+            // oauth2 로그인 설정 추가
+            .logout()
+            .logoutSuccessUrl("/")
+            .and()
             .oauth2Login()
-                // 로그인 성공 시 설정 추가
-                .defaultSuccessUrl("/login-success")
-                .successHandler(oAuth2AuthenticationSuccessHandler)
-                .userInfoEndpoint()
-                .userService(userOAuth2Service);
+            // 로그인 성공 시 설정 추가
+            .defaultSuccessUrl("/login-success")
+            .successHandler(oAuth2AuthenticationSuccessHandler)
+            .userInfoEndpoint()
+            .userService(userOAuth2Service)
+
         http
+                // jwt 토큰 필터
             .addFilterBefore(
                 JwtAuthenticationFilter(jwtTokenProvider),
                 UsernamePasswordAuthenticationFilter::class.java
             )
-//            .addFilterBefore(jwtExceptionFilter, JwtAuthenticationFilter::class.java)
+                // jwt 토큰 필터에서 나온 에러 처리용 필터
+            .addFilterBefore(jwtExceptionFilter, JwtAuthenticationFilter::class.java)
     }
 
     //    override fun configure(http: HttpSecurity) {

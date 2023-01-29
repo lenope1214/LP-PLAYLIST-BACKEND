@@ -77,6 +77,9 @@ subprojects {
 		annotationProcessor("org.hibernate.javax.persistence:hibernate-jpa-2.1-api:1.0.2.Final")
 		annotationProcessor("javax.annotation:javax.annotation-api:1.3.2")
 
+		// 파일 관리 아파치 라이브러리
+		implementation("commons-io:commons-io:2.11.0")
+
 		testImplementation("org.springframework.boot:spring-boot-starter-test")
 	}
 

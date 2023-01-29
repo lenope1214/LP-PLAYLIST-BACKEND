@@ -2,6 +2,7 @@ package kr.weareboard.lp.domain.entity.user
 
 import kr.weareboard.lp.domain.entity.user.enum.OAuth2Provider
 import kr.weareboard.lp.domain.entity.user.enum.UserRoleType
+import kr.weareboard.lp.domain.exception.MyEntityNotFoundException
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.crypto.password.PasswordEncoder
@@ -23,14 +24,15 @@ class UserDetailServiceImpl(
         return false
     }
 
-    fun createMemberKakao(email: String, nickname: String) {
+    fun createMemberKakao(providerId: String?, email: String, nickname: String) {
         val user = User(
-            username = email!!,
+            username = email,
             password = passwordEncoder.encode("1234"),
-            name = nickname!!,
+            name = nickname,
             role = UserRoleType.ROLE_USER,
             email = email,
             provider = OAuth2Provider.KAKAO,
+            providerId = providerId,
         )
         userRepository.save(user)
     }
@@ -38,5 +40,14 @@ class UserDetailServiceImpl(
     override fun loadUserByUsername(username: String): UserDetails {
 //        return userQueryRepository.findByUsername(username) ?: throw AccountException("불가능한 계정입니다.")
         return userQueryRepository.findByUsername(username) ?: throw AccountException("불가능한 계정입니다.")
+    }
+
+    fun oauthLogin(provider: OAuth2Provider, providerId: String?, email: String) {
+        val user = userRepository.findByEmail(email) ?: throw MyEntityNotFoundException("계정을 찾을 수 없습니다.")
+        user.login()
+        if(providerId != null && user.providerId == null || user.providerId != providerId) {
+            user.updateProvider(provider, providerId!!)
+        }
+        userRepository.save(user)
     }
 }

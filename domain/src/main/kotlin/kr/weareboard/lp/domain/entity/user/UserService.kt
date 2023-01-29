@@ -1,5 +1,7 @@
 package kr.weareboard.lp.domain.entity.user
 
+import kr.weareboard.lp.domain.entity.lp.LpQueryRepository
+import kr.weareboard.lp.domain.entity.lp.dto.response.LpSummaryResponse
 import kr.weareboard.lp.domain.entity.user.dto.request.*
 import kr.weareboard.lp.domain.entity.user.dto.response.LoginResponse
 import kr.weareboard.lp.domain.entity.user.dto.response.UserResponse
@@ -13,12 +15,21 @@ import kr.weareboard.lp.domain.jwt.JwtTokenProvider
 import kr.weareboard.lp.domain.jwt.dto.JwtToken
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.jpa.repository.Lock
 import org.springframework.security.authentication.*
 import org.springframework.security.core.AuthenticationException
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
+import java.io.BufferedReader
+import java.io.DataOutputStream
+import java.io.InputStreamReader
+import java.net.URI
+import java.net.URL
+import java.net.http.HttpClient
+import java.net.http.HttpRequest
+import java.net.http.HttpResponse
 import javax.persistence.LockModeType
 
 @Service
@@ -28,7 +39,14 @@ class UserService(
     private val userRepository: UserRepository,
     private val userQueryRepository: UserQueryRepository,
     private val passwordEncoder: PasswordEncoder,
+    private val lpQueryRepository: LpQueryRepository,
 ) {
+
+    @Value("\${auth.kakao.key.admin}")
+    private lateinit var adminKey: String
+
+    @Value("\${auth.kakao.logout.redirect-url}")
+    private lateinit var kakaoLogoutRedirectUrl: String
 
     fun refreshToken(refreshTokenRequest: RefreshTokenRequest): JwtToken {
         val userPk = jwtTokenProvider.getUserPk(refreshTokenRequest.refreshToken)
@@ -135,7 +153,9 @@ class UserService(
     }
 
     fun getMyInfo(): UserResponse {
-        return UserResponse.of(getAccountFromSecurityContext())
+        val loginUser = getAccountFromSecurityContext()
+        val newLpList = lpQueryRepository.findMyNewLpList(loginUser.id!!)
+        return UserResponse.of(loginUser, newLpList.map { LpSummaryResponse.of(it) })
     }
 
     fun updateUser(userUpdateRequest: UserUpdateRequest): UserResponse {
@@ -191,6 +211,44 @@ class UserService(
     fun getUserByUsername(username: String): User {
         return userRepository.findByUsername(username)
             ?: throw IllegalArgumentException("사용자를 찾을 수 없습니다.")
+    }
+
+    fun kakaoLogout(): String{
+        val loginUser: User = getAccountFromSecurityContext()
+        log.info("카카오 로그아웃 - ${adminKey},${loginUser.providerId!!}")
+
+        val logoutUrl: String = "https://kapi.kakao.com/v1/user/logout"
+
+        val client: HttpClient = HttpClient.newBuilder().build();
+        val request: HttpRequest = HttpRequest.newBuilder()
+            .uri(URI.create("${logoutUrl}?target_id_type=user_id&target_id=${loginUser.providerId!!}"))
+            .setHeader("Authorization", "KakaoAK $adminKey")
+            .POST(HttpRequest.BodyPublishers.ofString(""))
+            .build()
+
+        log.info("request : ${request}")
+        request.headers().map().forEach { (key, value) -> log.info("key : ${key}, value : $value") }
+
+        val response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        log.info("${response.body()[0]} 유저 로그아웃")
+        return "success"
+//        return response.body()
+//        val url = URL("")
+//
+//        val postData = ""
+//
+//        val conn = url.openConnection()
+//        conn.doOutput = true
+//        conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded")
+//        conn.setRequestProperty("Content-Length", postData.length.toString())
+//
+//        DataOutputStream(conn.getOutputStream()).use { it.writeBytes(postData) }
+//        BufferedReader(InputStreamReader(conn.getInputStream())).use { bf ->
+//            var line: String?
+//            while (bf.readLine().also { line = it } != null) {
+//                println(line)
+//            }
+//        }
     }
 
     companion object {

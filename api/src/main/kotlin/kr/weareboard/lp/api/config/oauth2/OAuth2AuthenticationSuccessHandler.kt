@@ -1,8 +1,6 @@
 package kr.weareboard.lp.api.config.oauth2
 
 import kr.weareboard.lp.domain.jwt.JwtTokenProvider
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.core.Authentication
@@ -18,17 +16,17 @@ import javax.servlet.http.HttpServletResponse
 class OAuth2AuthenticationSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
     @Autowired
     var jwtTokenUtil: JwtTokenProvider? = null
-
-    @Value("\${spring.profies.active:local}")
+    @Value("\${spring.profiles.active:local}")
     private val profiles: String? = null
 
     @Throws(IOException::class)
     override fun onAuthenticationSuccess(
-        request: HttpServletRequest, response: HttpServletResponse,
+        request: HttpServletRequest,
+        response: HttpServletResponse,
         authentication: Authentication
     ) {
 
-        logger.info("onAuthenticationSuccess")
+//        logger.info("onAuthenticationSuccess")
 
 //        login 성공한 사용자 목록.
         val oAuth2User = authentication.principal as OAuth2User
@@ -37,25 +35,32 @@ class OAuth2AuthenticationSuccessHandler : SimpleUrlAuthenticationSuccessHandler
         val properties = oAuth2User.attributes["properties"] as Map<String, Any>?
         val nickname = properties!!["nickname"] as String?
         val jwt = jwtTokenUtil!!.generateTokenForOAuth("kakao", email!!, nickname!!)
-        logger.info{"jwt : $jwt"}
+//        logger.info { "jwt : $jwt" }
         val url = makeRedirectUrl(jwt)
-        logger.info("url: $url")
+//        logger.info("url: $url")
         if (response.isCommitted) {
             logger.debug("응답이 이미 커밋된 상태입니다.")
             return
         }
-        response.addHeader("Authorization", jwt)
+//        response.addHeader("Authorization", jwt)
         redirectStrategy.sendRedirect(request, response, url)
     }
 
     private fun makeRedirectUrl(token: String): String {
         // url은 프론트 주소로 반환한다. dns 적용 후 변경예정 ?
-        logger.info{"profiles : $profiles"}
+//        logger.info { "profiles : $profiles" }
+
+//        val local ="http://localhost:5173/oauth2/redirect?token=$token"
+        val local = "http://localhost:3000/kakaoLogin?token=$token"
+
+        val dev ="http://localhost:3000/kakaoLogin?token=$token"
+//        val prod = "http://localhost:3000/kakaoLogin?token=$token"
+        val prod = "https://plz-front-highjoon.vercel.app/kakaoLogin?token=$token"
         val url: String? = profiles?.let {
             when (it) {
-                "local" -> "http://localhost:5173/oauth2/redirect?token=${token}"
-                "prod" -> "/oauth2/redirect?token=${token}"
-                else -> "/oauth2/redirect?token=${token}"
+                "local" -> local
+                "dev" -> dev
+                else -> prod
             }
         }
 //        return UriComponentsBuilder.fromUriString("/oauth2/redirect/$token")
@@ -63,7 +68,7 @@ class OAuth2AuthenticationSuccessHandler : SimpleUrlAuthenticationSuccessHandler
 //        return UriComponentsBuilder.fromUriString(url ?: "/oauth2/redirect/$token")
 //            .build().toUriString()
 
-                return UriComponentsBuilder.fromUriString(url ?: "/oauth2/redirect?token=${token}")
+        return UriComponentsBuilder.fromUriString(url ?: prod)
             .build().toUriString()
     }
 }

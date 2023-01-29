@@ -1,6 +1,6 @@
-package kr.weareboard.lp.domain.exception.storage
+package kr.weareboard.lp.core.storage.exception
 
-open class StorageException : RuntimeException {
+class StorageFileNotFoundException : StorageException {
     constructor(message: String?) : super(message) {}
     constructor(message: String?, cause: Throwable?) : super(message, cause) {}
 

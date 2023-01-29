@@ -35,7 +35,11 @@ class User(
 
     @Column(name = "provider", length = 255, nullable = false)
     @Comment(value = "사용자 oauth2 인증소")
-    val provider: OAuth2Provider = OAuth2Provider.PLZ,
+    var provider: OAuth2Provider = OAuth2Provider.PLZ,
+
+    @Column(name = "provider_id", length = 255,)
+    @Comment(value = "사용자 oauth2 인증소 id")
+    var providerId: String? = null,
 
     @Column(name = "role", length = 50, nullable = false)
     @Comment(value = "사용자 권한(ROLE_XXX)")
@@ -53,8 +57,6 @@ class User(
     val id: Long? = null,
 ) : UserDetails, BaseEntity() {
 
-    var kakaoToken: String = ""
-    
     private var loginAt: LocalDateTime? = null
 
     fun updateInfo(userUpdateRequest: UserUpdateRequest) {
@@ -64,6 +66,10 @@ class User(
 
     fun login() {
         loginAt = LocalDateTime.now()
+    }
+
+    fun isLoggedIn(): Boolean {
+        return loginAt != null
     }
 
     fun checkEmail(): Boolean {
@@ -109,5 +115,10 @@ class User(
 
     fun toRefererString(): String{
         return "User(id=$id, username='$username', password='$password', name='$name', role=$role)"
+    }
+
+    fun updateProvider(provider: OAuth2Provider, providerId: String) {
+        this.provider = provider
+        this.providerId = providerId
     }
 }

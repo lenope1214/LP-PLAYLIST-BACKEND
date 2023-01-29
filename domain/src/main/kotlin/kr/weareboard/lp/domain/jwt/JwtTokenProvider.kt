@@ -23,9 +23,9 @@ class JwtTokenProvider(private val userDetailsService: UserDetailServiceImpl) {
 
     private var secretKey: Key = Keys.secretKeyFor(SignatureAlgorithm.HS256)
 
-    // 토큰 유효시간 30분, 재발급 테스트 중에 15초로 수정함
+    // 토큰 유효시간 8시간, 재발급 테스트 중에 15초로 수정함
 //    private val accessTokenValidTime = 15 * 1000L
-    private val accessTokenValidTime = 8 * 60 * 60 * 1000L
+    private val accessTokenValidTime = 24 * 60 * 60 * 1000L
 
     // 토큰 유효시간 30일
     private val refreshTokenValidTime = 30 * 24 * 60 * 60 * 1000L
@@ -71,6 +71,23 @@ class JwtTokenProvider(private val userDetailsService: UserDetailServiceImpl) {
 
     fun resolveToken(request: HttpServletRequest): String? {
         val token = request.getHeader("Authorization")
+
+        if(token == null){
+            log.info("jwt resolve token - token is null")
+            log.info("request info - uri: ${request.requestURI}, ${request.method}")
+            log.info("request.requestURL: ${request.requestURL}")
+            log.info("request.pathInfo: ${request.pathInfo}")
+            log.info("request.servletPath: ${request.servletPath}")
+            log.info("request.authType: ${request.authType}")
+            log.info("request.contextPath: ${request.contextPath}")
+            log.info("request.cookies: ${request.cookies}")
+//            log.info("request.parts: ${request.parts}")
+            log.info("request.queryString: ${request.queryString}")
+            log.info("request.remoteHost: ${request.remoteHost}, ${request.remoteAddr}, ${request.remotePort}")
+            log.info("request.remoteUser: ${request.remoteUser}")
+            return null
+        }
+
         return if (token != null && token.indexOf("Bearer ") > -1) token.replace("Bearer ", "") else ""
         // 여기서 오류를 반환하게 되면 로그인 전 유저나 게스트 권한 등은 아무 요청도 할 수 없게 됨.
 //            throw UnauthorizedException("Unsupported JWT token")
